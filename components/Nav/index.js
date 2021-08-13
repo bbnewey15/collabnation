@@ -23,7 +23,7 @@ const Nav = (props) => {
   const useStyles = makeStyles(theme => ({
     root: {
       display: 'flex',
-      background: '#5b7087',
+      background: '#3d6ea3',
       boxShadow: 'inset 0px 2px 4px -1px rgba(0,0,0,0.2), inset 0px 4px 5px 0px rgba(0,0,0,0.14), inset 0px 1px 10px 0px rgba(0,0,0,0.12)'
     },
     toolbar: {
@@ -39,6 +39,13 @@ const Nav = (props) => {
     listItem:{
       border: '1px solid #ececec',
       padding: '0% 20%'
+    },
+    nav_div:{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
     }
     
    
@@ -66,21 +73,23 @@ const Nav = (props) => {
           <Drawer anchor={'left'} open={drawerOpen} onClose={event => closeDrawer(event)}>
             <List className={classes.list}>
                 {props.navButtons.map((button,i) => (
-                  <ListItem key={`button_${i}`} className={classes.listItem}>
+                  <ListItem key={`drawer_button_${i}`} className={classes.listItem}>
                       <Link href={button.path} as={`/scheduling/${button.path}`}><h3>{button.label}</h3></Link>
                   </ListItem>
                 ))}
             </List>
           </Drawer>
           </Box>
-          {props.navButtons.map(button => (
-            <Box display={{ xs: 'none', md: 'inline' }}  component="span">
+          <div className={classes.nav_div}>
+          {props.navButtons.map((button, i) => (
+            <Box key={`button_${i}`} display={{ xs: 'none', md: 'inline' }}  component="span">
           <NavButton className={classes.button}
             key={button.path}
             path={button.path}
             label={button.label}
           /></Box>
           ))}
+          </div>
         </Toolbar>    
   </AppBar>
   )

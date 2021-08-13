@@ -45,7 +45,7 @@ class MyDocument extends Document {
           <link rel="stylesheet" type="text/css" href="/static/css/react-virtualized-styles.css" />
           {/* we could add global styles here */ }
         </Head>
-        <body>
+        <body style={{background: '#333'}}>
           <Main />
           <NextScript />
         </body>

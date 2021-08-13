@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Wrapper from '../Scheduler/Wrapper'
+import Wrapper from './Wrapper'
 import Nav from '../Nav';
 import StyledFooter from '../Footer'
 import navButtons from "../../config/buttons";
@@ -19,7 +19,7 @@ const StyledNav = styled(Nav)({
 const Layout = (props) => {
 
       const {children} = props;
-      const title = "REI Scheduling";
+      const title = "Collab-Nation";
       //CSS
       const classes = useStyles();
 

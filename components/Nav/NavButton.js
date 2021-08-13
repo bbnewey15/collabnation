@@ -18,7 +18,7 @@ const NavButton = props => {
       minWidth: '100px',
       textDecoration: 'none',
       textAlign: 'center',
-      fontFamily: 'sans-serif',
+      fontFamily: 'arial',
       color: '#FFF',
       // border: '1px solid #99aec5',
       borderRadius: '2px',
@@ -26,6 +26,7 @@ const NavButton = props => {
       "&:hover, &:focus": {
         backgroundColor: '#9e9e9e',
       },
+      textTransform: 'uppercase',
       
     },
     aActive:{  
@@ -38,7 +39,7 @@ const NavButton = props => {
       minWidth: '100px',
       textDecoration: 'none',
       textAlign: 'center',
-      fontFamily: 'sans-serif',
+      fontFamily: 'arial',
       color: '#FFF',
       // border: '1px solid #99aec5',
       borderRadius: '2px',
@@ -48,6 +49,8 @@ const NavButton = props => {
       },
       border: '1px solid #bdf0ff',
       backgroundColor: '#6887a9',
+      textTransform: 'uppercase',
+
     },
     hover:{},
   }));
