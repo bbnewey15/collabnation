@@ -6,14 +6,14 @@ const StyledFooter = (props) => {
   const useStyles = makeStyles(theme => ({
     root: {
       padding: '15px',
-      background: '#5b7087',
+      background: '#5d5d5d',
       color: '#f5f5f5',
       position: 'fixed',
       bottom: 0,
       left: 0,
       width: '-webkit-fill-available',
       marginBottom: '0px',
-      boxShadow: 'inset 0px 4px 4px #434d59',
+      boxShadow: 'inset 0px 4px 4px #242424',
     },
   }));
 

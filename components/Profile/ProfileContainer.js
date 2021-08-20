@@ -105,8 +105,8 @@ export default ProfileContainer
 
 const useStyles = makeStyles(theme => ({
   root:{
-    margin: '0% 24% 1% 24%',
-    padding: '1% 2%',
+    margin: '2% 24% 1% 24%',
+    padding: '1% 1%',
     background: '#ddd',
     boxShadow: '0px 1px 14px 4px #0f0f0f',
   },

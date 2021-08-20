@@ -24,14 +24,9 @@ import {
 
 import Util from '../../../js/Util.js';
 
-import Settings from  '../../../js/Settings';
-import Entities from  '../../../js/Entities';
-import { ListContext } from '../../../components/WorkOrders/WOContainer';
-import { DetailContext } from '../../../components/WorkOrders/WOContainer';
 import clsx from 'clsx';
 import _ from 'lodash';
 import { AddCircleOutline } from '@material-ui/icons';
-import AddEditManfItemDialog from '../../Inventory/Inv_Parts/components/AddEditManfItemDialog';
 
 const FormBuilder = forwardRef((props, ref) => {
     const { fields, //table of each input field
@@ -283,72 +278,6 @@ const FormBuilder = forwardRef((props, ref) => {
                         //         console.log("TEST",textValueObject[field.field]);
                         //         updateItem[field.field] = textValueObject[field.field];
                         //     break;
-                        case 'entity-titles':
-                            const saveEntity = (data, callback) => {
-                                console.log("Data", data);
-                                console.log("Callback entit", callback)
-                                if(itemToSave[field.field]?.length > 0 ){
-                                    itemToSave[field.field].forEach((title)=>{
-                                        //Remove titles if false
-                                        if(title.title_change && title.title_change == "remove"){
-                                            if(title?.title_attached != 0){
-                                                //Delete from entities_contacts_titles
-                                                Entities.deleteContactTitle(title.title_attached)
-                                                .then((data)=>{
-                                                    console.log("Deleted title", title.title_attached)
-                                                    if(callback){
-                                                        callback()
-                                                    }
-                                                })
-                                                .catch((error)=>{
-                                                    console.error("Failed to delete contact title")
-                                                    cogoToast.error("Internal Server Error");
-                                                    if(callback){
-                                                        callback()
-                                                    }
-                                                })
-                                            }
-                                        }
-                                        if(title.title_change && title.title_change == "add"){
-                                            //check against original DB data to see if we really need to add
-                                            var updatedTitle = {...title};
-                                            if(addOrEdit == "add"){
-                                                updatedTitle["contact_id"] = data.insertId;
-                                            }else{
-                                                updatedTitle["contact_id"] = itemToSave["record_id"];
-                                            }
-                                            
-                                            if(title?.title_attached == 0){
-                                                //Add to entities_contacts_titles
-                                                Entities.addContactTitle( updatedTitle )
-                                                .then((data)=>{
-                                                    if(callback){
-                                                        callback()
-                                                    }
-                                                })
-                                                .catch((error)=>{
-                                                    console.error("Failed to delete contact title")
-                                                    cogoToast.error("Internal Server Error");
-                                                    if(callback){
-                                                        callback()
-                                                    }
-                                                })
-                                            }
-                                        }
-                                
-                                    }) 
-                                }else{
-                                    //Still run callback if no title change
-                                    if(callback){
-                                        callback();
-                                    }
-                                }
-                                
-                            }
-                            //saving the save function so that we can run after entity contact is inserted so we can get contact_id
-                            updateItem["postSaveFunction"] = saveEntity;
-                            
-                            break;
                         default:
                             //Others are updated with itemToSave (formObject) state variable
                             if(itemToSave && itemToSave[field.field])
@@ -491,7 +420,7 @@ const GetInputByType = function(props){
                 <TextField id={`${id_pretext ? id_pretext : 'input'}-${field.field}`} 
                         error={error || valid_error}
                          variant="outlined"
-                         /*multiline={field.multiline}*/
+                         multiline={field.multiline}
                          name={field.field}
                          disabled={field.disabled}
                          inputRef={ref_object[field.field]}
@@ -966,168 +895,6 @@ const GetInputByType = function(props){
                 }}
                 /> 
             )
-            break;
-        case 'order_kit_select':
-
-            const [openAddManfItem, setOpenAddManfItem] = useState(false);
-            const [manfItemId, setManfItemId] = useState(null);
-            const [activePart, setActivePart] = useState({});
-            const [addEditManfItemMode, setAddEditManfItemMode] =useState("add");
-            const [selectedParts, setSelectedParts] = useState([]);
-
-            const handleChangeForKit = (value, shouldUpdate, type, field, part, manfItemToEdit)=>{
-                
-                if(value.target.value === '-1'){
-                    //add was chosen
-                    setActivePart(part)
-                    setAddEditManfItemMode("add")
-                    setOpenAddManfItem(true);
-                    return;
-                }
-                if(value.target.value === '-2'){
-                    console.log("manfItemToEdit",manfItemToEdit);
-                    //edit was chosen
-                    setActivePart(part)
-                    setManfItemId(manfItemToEdit)
-                    setAddEditManfItemMode("edit")
-                    setOpenAddManfItem(true);
-                    return;
-                }
-                handleInputOnChange(value, shouldUpdate, type, field);
-                
-            }
-
-            useEffect(()=>{
-                let selectedItems =  _.uniqBy(kitPartsManItems, 'rainey_id').map((part)=>{
-                    return {rainey_id: part.rainey_id, selected: true}
-                }) 
-
-                if(formObject && !formObject["kit_items"] && selectedItems?.length > 0 && mode == "add") {
-                    setFormObject({...formObject, kit_items: selectedItems})
-                }
-
-            },[kitPartsManItems])
-
-            const handleSelectAll = (value) => {
-                console.log("value", value)
-                if(formObject &&  formObject["kit_items"]?.length > 0) {
-                    setFormObject({...formObject, kit_items: formObject["kit_items"].map((item)=> ({...item, selected: value}))})
-                }
-            }
-            
-            const handleSelectPart = (value, row)=>{
-                console.log("row",row)
-                setFormObject({...formObject, kit_items: formObject["kit_items"] ? formObject["kit_items"].map((item)=> {
-                    if(item.rainey_id == row.rainey_id){
-                        return ({...item, selected: value});
-                    }
-                    return item;
-                } ) : {rainey_id: row.rainey_id, selected: value} });
-            }
-            
-            return(<>
-            <AddEditManfItemDialog activePart={activePart} manfItemId={manfItemId} setManfItemId={setManfItemId}
-                            addNewManDialogOpen={openAddManfItem} setAddNewManDialogOpen={setOpenAddManfItem} 
-                            editDialogMode={addEditManfItemMode} setEditDialogMode={setAddEditManfItemMode} refreshFunction={()=>setKitsPartsManItemsRefetch(true)}/>
-                {kitPartsManItems?.length > 0 ? 
-                
-                <div style={{width: '100%'}}>
-                    {(error || valid_error) && <span className={classes.errorSpan}>Valid Manufacturing Item Required</span> }
-                    <div className={classes.headListItemDiv}> {/*Head Item*/}
-                        <div className={classes.headListCheckDiv}><Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            name="checkedI"
-                            checked={formObject ? formObject["kit_items"] ? formObject["kit_items"].every((item)=>item.selected)  ? true : false : true : false }
-                            onChange={(event)=> handleSelectAll(event.target.checked ? 1 : 0)}
-                        /></div>
-                        <div className={classes.headListNameDiv}><span>Part Name</span></div>
-                        <div className={classes.headListManfDiv}><span>Manfucturer</span></div>
-                        <div className={classes.headListQtyDiv}><span>Order Qty</span></div>
-                        <div className={classes.headListPriceDiv}><span>Order Price</span></div>
-                    </div>
-                {_.uniqBy(kitPartsManItems, 'rainey_id').map((part)=> 
-                {
-                    let manItems = kitPartsManItems.filter((item)=> item.rainey_id === part.rainey_id);
-                    const updateRow = formObject ? formObject["kit_items"]?.find((item)=> part.rainey_id == item.rainey_id) : {rainey_id: part.rainey_id};
-                    const partSelected = updateRow && updateRow[`selected`] ? true : false;
-                    return (
-                        <>
-                        
-                        
-                        
-                        <div className={clsx({[classes.inputValueKitSelect]:true, [classes.listItemDiv]:true})}>
-                        <div className={classes.headListCheckDiv}><Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            name="checkedI"
-                            checked={ partSelected }
-                            onChange={(event)=> handleSelectPart(event.target.checked ? 1 : 0, updateRow )}
-                        /></div>
-                        <div className={classes.headListNameDiv}>
-                            <span className={clsx({[classes.setDescSpan]:true, [classes.disabledSpan]: !partSelected})}>{part.description}</span>
-                        </div>
-                        <div className={classes.headListManfDiv}>
-                        <Select
-                            disabled={!partSelected}
-                            //error={error || valid_error}
-                            id={`woi_input_man_select-part_mf_id-${part.rainey_id}`}
-                            value={updateRow && updateRow[`part_mf_id`] ? updateRow[`part_mf_id`] : 0}
-                            className={classes.inputSelect}
-                            onChange={value => handleChangeForKit(value, true, field.type, `part_mf_id-${part.rainey_id}`, part, updateRow ? updateRow[`part_mf_id`] : null ) }
-                            native
-                        >
-                            <option value={0} disabled selected>
-                                {"<Select Manufacturer>"}
-                            </option>
-                            <option value={-1} >
-                                {"*Add New*"}
-                            </option>
-                            {updateRow && updateRow[`part_mf_id`] ? <option value={-2} >
-                                {"*Edit Current*"}
-                            </option> : <></>}
-                             {manItems?.length > 0 && manItems.map((manItem)=>{
-                                 //console.log("manItem", manItem);
-                                return (
-                                    <option value={manItem.mf_id}>
-                                        {manItem.man_name}- PN:{manItem.mf_part_number} - {manItem.man_notes}
-                                    </option>
-                                )
-                            }) }
-                        </Select>
-                        </div>
-                        <div className={clsx({[classes.inputValue]:true, [classes.headListQtyDiv]: true})}>
-                            <TextField id={`woi_input-qty_in_order-${part.rainey_id}`} 
-                                    
-                                    //error={error || valid_error}
-                                    variant="outlined"
-                                    /*multiline={field.multiline}*/
-                                    name={`qty_in_order-${part.rainey_id}`}
-                                    disabled={field.disabled || !partSelected}
-                                    inputProps={{className: classes.inputStyle}} 
-                                    classes={{root: classes.setInputRoot}}
-                                    value={updateRow &&  updateRow[`qty_in_order`] }
-                                    onChange={value => handleInputOnChange(value, true, field.type, `qty_in_order-${part.rainey_id}`)}  />
-                        </div>
-                        <div className={clsx({[classes.inputValue]:true, [classes.headListPriceDiv]: true})}>
-                            <TextField id={`woi_input-actual_cost_each-${part.rainey_id}`} 
-                                    
-                                    //error={error || valid_error}
-                                    variant="outlined"
-                                    /*multiline={field.multiline}*/
-                                    name={`actual_cost_each-${part.rainey_id}`}
-                                    disabled={field.disabled || !partSelected}
-                                    
-                                    inputProps={{className: classes.inputStyle}} 
-                                    classes={{root: classes.setInputRoot}}
-                                    value={updateRow &&  updateRow[`actual_cost_each`] }
-                                    onChange={value => handleInputOnChange(value, true, field.type, `actual_cost_each-${part.rainey_id}`)}  />
-                        </div>
-                        </div></> ) 
-                    } 
-                    ) }
-            </div> : <>No parts added to this set</>}
-            </>)
             break;
         case "select-manufacturer":
             return(<div className={classes.inputValueSelect}>

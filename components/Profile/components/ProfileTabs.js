@@ -71,7 +71,7 @@ export default function ProfileTabs({children}) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default"> 
+      <AppBar position="static" color="default" className={classes.appbar}> 
         <Tabs
           tabValue={currentView?.index}
           onChange={handleChange}
@@ -102,10 +102,13 @@ const useStyles = makeStyles(theme => ({
   //[theme.breakpoints.down('sm')]: sm, md, lg
   root: {
     width: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#999',
     '& header':{
       marginTop: '0%',
     },
+  },
+  appbar:{
+    background: '#ddb567',
   },
   icon:{
       margin: '2px 6px -3px 6px',
@@ -123,6 +126,7 @@ const useStyles = makeStyles(theme => ({
     padding: '10px',
     minHeight: '0px',
     lineHeight: '1',
+    maxWidth: '150px',
   },
   nonSelectedTab: {
     flexGrow : '2',
@@ -134,10 +138,12 @@ const useStyles = makeStyles(theme => ({
       borderBottom: '2px solid #a2ceff',
       color: '#d87904',
     },
+    maxWidth: '150px',
     minHeight: '0px',
     lineHeight: '1',
   },
   selectedTabSmall: {
+    maxWidth: '150px',
     flexGrow : '1',
     boxShadow: 'inset 1px 2px 6px 0px #414d5a',
     color: '#d87904 !important',
@@ -147,6 +153,7 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '1',
   },
   nonSelectedTabSmall: {
+    maxWidth: '150px',
     boxShadow:' -1px 1px 2px 0px #414d5a',
     flexGrow : '1',
     '&:hover':{

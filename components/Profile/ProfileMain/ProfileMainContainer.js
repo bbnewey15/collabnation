@@ -13,6 +13,7 @@ import Settings from '../../../js/Settings';
 //import InvOrdersInContainer from './Inv_OrdersIn/InvOrdersInContainer';
 import _ from 'lodash';
 import { ProfileContext } from '../ProfileContainer';
+import ProfileMainBasicInfo from './ProfileMainBasicInfo';
 
 
 export const SubContext = createContext(null);
@@ -26,15 +27,21 @@ const ProfileMainContainer = function(props) {
 
   const classes = useStyles();
 
- 
+  const [resetWOIForm, setResetWOIForm] = useState(false);
+  const [basicInfoObject, setBasicInfoObject] = useState(null);
+  const [basicInfoObjectRefetch, setBasicInfoObjectRefetch] = useState(false);
 
   return (
     <div className={classes.root}>
-      <SubContext.Provider value={{} } >
+      <SubContext.Provider value={{resetWOIForm, setResetWOIForm, basicInfoObject, setBasicInfoObjectRefetch ,setBasicInfoObject} } >
       
         <div className={classes.containerDiv}>
             <div className={classes.profileHead}>
                     <img className={classes.picDiv} height="168px" width="168px" src="/static/rainey_elec.png"/>
+            </div>
+
+            <div>
+              <ProfileMainBasicInfo />
             </div>
 
         </div>
@@ -48,7 +55,7 @@ export default ProfileMainContainer
 const useStyles = makeStyles(theme => ({
   root:{
     background: '#ddd',
-    padding: '1% 2%',
+    //padding: '1% 2%',
   },
   containerDiv:{
     backgroundColor: '#fafafa',
